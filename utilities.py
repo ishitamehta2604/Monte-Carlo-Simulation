@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 class Player():
     def __init__(self, dealt_card, dealer= False):
@@ -38,19 +39,83 @@ class Player():
 
 
 class Cards():
-    def __init__(self, number_of_player):
+    '''
+    This call generate the deck, dealt the cards in the start of the game and allows player to draw a card from deck
+
+    >>> random.seed(100)
+    >>> card = Cards(7)
+    >>> test_cards = card.dealt_cards()
+    >>> len(test_cards)
+    8
+    >>> len(test_cards[0])
+    2
+
+
+    '''
+    def __init__(self, number_of_player: int):
+        '''
+        This function take the necessary inputs required for the class Cards and creates the necessary variable
+        :param number_of_player: self explainatory
+        '''
         ## try combing both
-        self.deck = [1 to 52]
-        self.shuffle
+        self.deck = [i for i in range(1,52 + 1)]
+        random.shuffle(self.deck)
         self.number_of_player = number_of_player
 
-    def dealt_cards(self):
+    def dealt_cards(self) -> list:
+        '''
+        This function dealt the cards to player and dealer, based on there turn
+        :return: list of list containing tuples with card and suit
+        '''
         ## each player and deal are dealt with 2 cards_score
-        self.deck.remove()
-        return [[], [], []]
+        player_dealer_cards = [[] for i in range(self.number_of_player + 1)]
 
-    def remove_card_from_deck(self):
-        self.deck.remove()
+        # Number of cards to be dealt
+        for _ in range(2):
+            # Number of player
+            for i in range(self.number_of_player + 1):
+                player_dealer_cards[i].append(self.remove_card_from_deck())
+
+        return player_dealer_cards
+
+    def remove_card_from_deck(self) -> tuple:
+        '''
+        This functions removes the top card from deck
+        :return: list of tuple with card and suit
+        '''
+        top_card_on_deck = self.deck[0]
+
+        ## Exact card
+        if top_card_on_deck % 13 == 1:
+             card = 'A'
+        elif top_card_on_deck % 13 == 11:
+            card = 'J'
+        elif top_card_on_deck % 13 == 12:
+            card = 'Q'
+        elif top_card_on_deck % 13 == 0:
+            card = 'K'
+        else:
+            card = str(top_card_on_deck)
+
+        ## Suit of the card
+        # Reference: https://www.youtube.com/watch?v=IsklrLQE88Y&ab_channel=AllTech
+        # Club - \u2663
+        # Spades - \u2660
+        # Diamond - \u2666
+        # Heart - \u2665
+        if top_card_on_deck < 14:
+            suit = '\u2663'
+        elif top_card_on_deck < 27:
+            suit = '\u2660'
+        elif top_card_on_deck < 40:
+            suit = '\u2666'
+        else:
+            suit = '\u2665'
+
+        # Removing the card from the deck
+        self.deck.remove(top_card_on_deck)
+
+        return (card, suit)
 
 ### remove head cards
 
@@ -96,7 +161,7 @@ class Game():
             else:
                 card = self.deck.remove_card_from_deck()
                 self.dealer.update_cards_in_hand(card)
-                
+
     def win_loss:
         ## Win-loss for Dealer
         ## Draw
@@ -119,4 +184,4 @@ class Game():
 
 
 if __name__ == '__main__':
-    game()
+    card = Cards(2)
