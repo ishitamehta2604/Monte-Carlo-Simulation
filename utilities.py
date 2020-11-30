@@ -282,7 +282,7 @@ Variations:
 '''
 
 
-def simulaion(target_score=21):
+def simulation(target_score=21):
     game_instance = Game()
     game_instance.creating_player_instance()
     game_instance.contender_game(target_score)
