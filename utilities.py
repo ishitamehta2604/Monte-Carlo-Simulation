@@ -291,8 +291,10 @@ def simulation(target_score=21):
     game_instance.summary(target_score)
 
 def simulation2():
+    return
 
 def simulation3():
+    return
 
 if __name__ == '__main__':
     card = Cards(2)
