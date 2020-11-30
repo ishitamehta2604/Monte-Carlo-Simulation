@@ -1,13 +1,14 @@
 import numpy as np
 import random
 
+
 class Player():
     '''
     This class defines the player and dealer,  and stores their cards and calculate the cards score. And also taken into account when a player should take stand
 
     >>> random.seed(1)
     >>> player1 = Player([('\u2663', 'K', 10), ('\u2660', 'J', 10)])
-    >>> player1.stand()
+    >>> player1.player_stand()
     True
 
     >>> player1.card_score()
@@ -16,11 +17,28 @@ class Player():
     >>> player1.update_cards_in_hand(('\u2663', 'A', 1))
     >>> player1.card_score()
     21
-    >>> player1.stand()
+    >>> player1.player_stand()
     True
 
+
+    >>> random.seed(1)
+    >>> dealer = Player([('\u2663', 'K', 10), ('\u2660', 'A', 11)], True)
+    >>> dealer.dealer_stand([20,18], [50,60])
+    True
+
+    >>> dealer.card_score()
+    21
+
+    >>> dealer.update_cards_in_hand(('\u2663', 'A', 11))
+    >>> dealer.card_score()
+    22
+    >>> dealer.dealer_stand([20,18], [50,60])
+    True
+
+
     '''
-    def __init__(self, dealt_card, dealer= False):
+
+    def __init__(self, dealt_card, dealer=False):
         '''
         This function take the necessary inputs required for the class Player and creates the necessary variable
         :param dealt_card: list of cards
@@ -31,37 +49,57 @@ class Player():
         self.cards_score = []
         self.flag_Ace = False
         self.dealt_card = dealt_card
+        self.Ace_1 = False
 
-        if not dealer:
-            self.bet = random.randint(1, 10)*10
+        if not self.dealer:
+            self.bet = random.randint(1, 10) * 10
 
-    def card_score(self):
-        score =0
+    def card_score(self,target_score):
+        score = 0
+
         for i in self.cards_in_hand:
-            if i[2] == 1:
+            if i[2] == 11:
                 score += i[2]
                 self.flag_Ace = True
             else:
                 score += i[2]
+
+        if self.flag_Ace:
+            if score > target_score:
+                self.Ace_1 = True
+
+        if self.Ace_1:
+            score -= 10
+            self.flag_Ace = False
         return score
 
     def update_cards_in_hand(self, card):
         self.cards_in_hand.append(card)
 
-    def stand(self):
+    def dealer_stand(self, player_score: list, player_bet: list,target_score):
+        # print(np.asarray(player_score) < 19)
+        # print(np.where(self.card_score() >= 1 ,1, 0).sum())
+
+        if np.where(self.card_score() >= (np.asarray(player_score)), np.asarray(player_bet), 0).sum() >= (
+                sum(player_bet) / 2):
+            return True
+
+        if self.card_score() >= target_score-3:
+            return True
+
+        else:
+            return False
+
+    def player_stand(self, target_score):
         player_score = self.card_score()
         # true means terminal_state has reached
         ############################################## ace value
         if self.flag_Ace == False:
-            return player_score > 15
+            return player_score >= target_score - 6
         else:
-            ## Ace value is stored as 1 in the card_score
-            if player_score > (7 + 10) & player_score < (11 + 10):
+            ## Ace value is stored as 11 in the card_score
+            if player_score >= (6 + 11):
                 return True
-            else:
-                self.flag_Ace = False
-                self.stand(self)
-
 
     # def double:
     ## compulory add a card
@@ -70,8 +108,6 @@ class Player():
     ## A K
     ## K 1
     ## Insurance taken
-
-
 
 
 class Cards():
@@ -88,13 +124,14 @@ class Cards():
 
 
     '''
+
     def __init__(self, number_of_player: int):
         '''
         This function take the necessary inputs required for the class Cards and creates the necessary variable
         :param number_of_player: self explainatory
         '''
         ## try combing both
-        self.deck = [i for i in range(1,52 + 1)]
+        self.deck = [i for i in range(1, 52 + 1)]
         random.shuffle(self.deck)
         self.number_of_player = number_of_player
 
@@ -123,8 +160,8 @@ class Cards():
 
         ## Exact card
         if top_card_on_deck % 13 == 1:
-             card = 'A'
-             card_score = 1
+            card = 'A'
+            card_score = 11
         elif top_card_on_deck % 13 == 11:
             card = 'J'
             card_score = 10
@@ -136,7 +173,7 @@ class Cards():
             card_score = 10
         else:
             card = str(top_card_on_deck)
-            card_score = top_card_on_deck
+            card_score = top_card_on_deck % 13
 
         ## Suit of the card
         # Reference: https://www.youtube.com/watch?v=IsklrLQE88Y&ab_channel=AllTech
@@ -158,71 +195,104 @@ class Cards():
 
         return (suit, card, card_score)
 
+
 ### remove head cards
 
 
-#
-#
-# class Game():
-#     def __init__(self):
-#         self.number_of_player = random(2,7)
-#         self.deck = Cards(number_of_player)
-#         self.player_cards = deck.dealt_cards()
-#         self.final_score = []
-#             self.all_players_bet = []
-#     # def creating_player_instance(self):
-#         for i in range(1, self.number_of_player + 2):
-#             if i <= self.number_of_player + 1:
-#                 # Reference :https://stackoverflow.com/questions/6181935/how-do-you-create-different-variable-names-while-in-a-loop
-#                 exec(f'self.contender{i} = Player(self.player_cards[i])')
-#
-#
-#             # defining dealer
-#             elif i ==  self.number_of_player + 2:
-#                 self.dealer = Player(self.player_cards[i], dealer= True)
-#
-#     def contender_game(self):
-#         for i in range(1, self.number_of_player + 1):
-#             while !(eval('self.contender'+ i + '.stand')):
-#                 card = self.deck.remove_card_from_deck()
-#                 eval('self.contender' + i + '.update_cards_in_hand(card)')
-#             self.final_score.append(eval('self.contender' + i + '.card_score()'))
-#             self.all_players_bet.append('self.contender' + i + '.bet')
-#         # Score more than 21 than player lose
-#         self.final_score = np.tolist(np.where(np.asarray(self.final_score) <= 21, np.asarray(self.final_score), 0))
-#
-#
-#     def dealer_game(self):
-#         ## Check if the dealer is winning the majority bet, then stand
-#         ### else pick a cards
-#         ### Also consider extreme case like where total should be less than 20
-#         while np.where(self.dealer.card_score() > (np.asarray(self.final_score)) == True, self.all_players_bet, 0).sum() > (sum(self.all_players_bet) / 2):
-#             if self.dealer.card_score() >= 20:
-#                 break
-#             else:
-#                 card = self.deck.remove_card_from_deck()
-#                 self.dealer.update_cards_in_hand(card)
-#
-#     def win_loss:
-#         ## Win-loss for Dealer
-#         ## Draw
-#         if self.dealer.card_score() > 21:
-#             return np.where((np.asarray(self.final_score) == 0, 'Draw', 'Lose')
-#         else:
-#             return np.where(self.dealer.card_score() > (np.asarray(self.final_score), 'Win', 'Lose')
+class Game():
+    '''
+    This class interacts the with Player and Cards class and makes the game workable
 
+    >>> random.seed(1)
+    >>> game1 = Game()
+    >>> game1.creating_player_instance()
+    >>> game1.contender_game()
+    >>> game1.dealer_game()
+    >>> game1.summary()
+    [('♣', '3', 3), ('♠', '20', 7)]
+    10
+    20
+    [('♦', 'K', 10), ('♣', '10', 10)]
+    20
+    60
+    [('♣', 'Q', 10), ('♠', '19', 6)]
+    16
+    90
+    ['Lose' 'Win' 'Lose']
+    >>> game1.win_loss()
+    array(['Win', 'Lose', 'Win'], dtype='<U4')
+    '''
 
-    # def summary(self, print = True):
+    def __init__(self):
+        self.number_of_player = random.randint(2, 7)
+        self.deck = Cards(self.number_of_player)
+        self.player_cards = self.deck.dealt_cards()
+        self.final_score = []
+        self.all_players_bet = []
+        self.dealer = Player(self.player_cards[-1], dealer=True)
+
+    def creating_player_instance(self):
+        for i in range(1, self.number_of_player + 1):
+            if i <= self.number_of_player + 1:
+                # Reference :https://stackoverflow.com/questions/6181935/how-do-you-create-different-variable-names-while-in-a-loop
+                exec(f'self.contender{i} = Player(self.player_cards[{i - 1}])')
+
+            # defining dealer
+            # elif i ==  self.number_of_player + 2:
+            #     self.dealer = Player(self.player_cards[i-1], dealer= True)
+
+    def contender_game(self, target_score):
+        for i in range(1, self.number_of_player + 1):
+            while not (eval(f'self.contender{i}.player_stand')):
+                card = self.deck.remove_card_from_deck()
+                eval(f'self.contender{i}.update_cards_in_hand({card})')
+            self.final_score.append(eval(f'self.contender{i}.card_score()'))
+            self.all_players_bet.append(eval(f'self.contender{i}.bet'))
+        # Score more than 21 than player lose
+        self.final_score = (np.where(np.asarray(self.final_score) <= target_score, np.asarray(self.final_score), 0)).tolist()
+
+    def dealer_game(self):
+        while not self.dealer.dealer_stand(self.final_score, self.all_players_bet):
+            card = self.deck.remove_card_from_deck()
+            self.dealer.update_cards_in_hand(card)
+
+    def win_loss(self,target_score):
+        ## Win-loss for Dealer
+        ## Draw
+        if self.dealer.card_score() > target_score:
+            return np.where((np.asarray(self.final_score)) == 0, 'Draw', 'Lose')
+        else:
+            return np.where(self.dealer.card_score() > (np.asarray(self.final_score)), 'Win', 'Lose')
+
+    def summary(self):
         # For Each
-        # for i in range(1, self.number_of_player + 1):
-            # Cards_in_hands
+        for i in range(1, self.number_of_player + 1):
+            print(eval(f'self.contender{i}.cards_in_hand'))
+            score = eval(f'self.contender{i}.card_score()')
+            print(score)
+            print(eval(f'self.contender{i}.bet'))
 
-            # bet
-            # Win/Lose
-        # Total Win/Loss
+        Winner = self.win_loss()
+        print(np.where(Winner == 'Draw', 'Draw', np.where(Winner == 'Lose', 'Win', 'Lose')))
 
 
+'''
+Variations:
 
+'''
+
+
+def simulaion(target_score=21):
+    game_instance = Game()
+    game_instance.creating_player_instance()
+    game_instance.contender_game(target_score)
+    game_instance.dealer_game(target_score)
+    game_instance.win_loss(target_score)
+    game_instance.summary(target_score)
+
+def simulation2():
+
+def simulation3():
 
 if __name__ == '__main__':
     card = Cards(2)
