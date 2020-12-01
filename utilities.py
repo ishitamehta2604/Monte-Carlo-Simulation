@@ -32,10 +32,9 @@ class Player():
 
     >>> dealer.update_cards_in_hand(('\u2663', 'A', 11))
     >>> dealer.card_score()
-    (22, False)
+    (12, False)
     >>> dealer.dealer_stand([20,18], [50,60])
-    True
-
+    False
 
     '''
 
@@ -51,7 +50,7 @@ class Player():
         self.cards_score = []
         self.flag_Ace = False
         self.dealt_card = dealt_card
-        self.Ace_1 = False
+        self.Ace_count = 0
         self.target_score = target_score
 
         if not self.dealer:
@@ -67,16 +66,19 @@ class Player():
             if i[2] == 11:
                 score += i[2]
                 self.flag_Ace = True
+                self.Ace_count += 1
             else:
                 score += i[2]
 
-        if self.flag_Ace:
+        ## Accounting for Ace score
+        while self.Ace_count >= 1:
             if score > self.target_score:
-                self.Ace_1 = True
-
-        if self.Ace_1:
-            score -= 10
-            self.flag_Ace = False
+                self.Ace_count -= 1
+                score -= 10
+                if self.Ace_count == 0:
+                    self.flag_Ace = False
+            else:
+                break
 
         ## BlackJack Condition
         if score == self.target_score:
@@ -247,24 +249,33 @@ class Game():
     >>> game1.creating_player_instance()
     >>> game1.contender_game()
     >>> game1.dealer_game(dealer_advantage = True)
-    >>> game1.summary(detail_summary= True)
-    Dealer Won: $110.0
-    Dealer Cards [('♠', 'K', 10), ('♥', 'J', 10)]
-    Dealer Score (20, False)
-    <BLANKLINE>
-    [('♣', '3', 3), ('♠', '7', 7), ('♠', '3', 3), ('♦', '4', 4)]
-    (17, False)
-    20
-    [('♦', 'K', 10), ('♣', '10', 10)]
-    (20, False)
-    60
-    [('♣', 'Q', 10), ('♠', '6', 6)]
-    (16, False)
-    90
-    ['Lose' 'Draw' 'Lose']
-
     >>> game1.win_loss(BJ_reward = 1.5)
     [array(['Win', 'Draw', 'Win'], dtype='<U4'), array(110.)]
+
+    >>> game1.summary(detail_summary= True)
+    Dealer Won: $110.0
+    Dealer Cards: ♠K |♥J |
+    Dealer Score 20
+    <BLANKLINE>
+    Player1:
+    Cards ♣3 |♠7 |♠3 |♦4 |
+    Player Score: 17
+    Player Bet: 20
+    Player: Lose
+    <BLANKLINE>
+    Player2:
+    Cards ♦K |♣10 |
+    Player Score: 20
+    Player Bet: 60
+    Player: Draw
+    <BLANKLINE>
+    Player3:
+    Cards ♣Q |♠6 |
+    Player Score: 16
+    Player Bet: 90
+    Player: Lose
+    <BLANKLINE>
+
 
     '''
 
@@ -325,17 +336,30 @@ class Game():
         print(f"Dealer Won: ${dealer_won[1]}")
 
         if detail_summary:
-            print(f"Dealer Cards {self.dealer.cards_in_hand}")
-            print(f"Dealer Score {self.dealer.card_score()}\n")
-
-            for i in range(1, self.number_of_player + 1):
-                print(eval(f'self.contender{i}.cards_in_hand'))
-                score = eval(f'self.contender{i}.card_score()')
-                print(score)
-                print(eval(f'self.contender{i}.bet'))
+            print("Dealer Cards: ", end = '')
+            for dealer_c in self.dealer.cards_in_hand:
+                print(f"{dealer_c[0]}", end ='')
+                print(f"{dealer_c[1]}", end = ' |')
+            print(f"\nDealer Score {self.dealer.card_score()[0]}\n")
 
             Winner = dealer_won[0]
-            print(np.where(Winner == 'Draw', 'Draw', np.where(Winner == 'Lose', 'Win', 'Lose')))
+            Player_won = np.where(Winner == 'Draw', 'Draw', np.where(Winner == 'Lose', 'Win', 'Lose'))
+
+            for i in range(1, self.number_of_player + 1):
+                print(f"Player{i}:")
+                # Reference: https://www.geeksforgeeks.org/print-without-newline-python/
+                print("Cards", end =" ")
+                for c in eval(f"self.contender{i}.cards_in_hand"):
+                    print(f"{c[0]}", end = '')
+                    print(f"{c[1]}", end = ' |')
+
+                score = eval(f'self.contender{i}.card_score()')
+                print(f"\nPlayer Score: {score[0]}")
+                bet = eval(f'self.contender{i}.bet')
+                print(f"Player Bet: {bet}")
+                print(f"Player: {Player_won[i-1]}", end = '\n\n')
+
+
 
 '''
 Variations:
@@ -364,8 +388,10 @@ def simulation(number_of_simulations, target_score=21, head_cards =True, head_ca
 
     >>> random.seed(1)
     >>> df = simulation(2, target_score=21, head_cards= True, dealer_advantage = True,BJ_reward = 1.5, Summary = True, detail_summary = False)
+    Game 0
     Dealers cumulative winning: $110.0
     Dealer Won: $110.0
+    Game 1
     Dealers cumulative winning: $380.0
     Dealer Won: $270.0
 
@@ -391,6 +417,8 @@ def simulation(number_of_simulations, target_score=21, head_cards =True, head_ca
     cumulative_win = 0
     for i in range(number_of_simulations):
         Game.append(i)
+        if Summary:
+            print(f"Game {i}")
         instance_call = Generate_one_simulation(cumulative_win, target_score, head_cards, head_card_value, dealer_advantage, BJ_reward,Summary, detail_summary)
         Dealer_Won.append(instance_call[0])
         cumulative_win += instance_call[1]
