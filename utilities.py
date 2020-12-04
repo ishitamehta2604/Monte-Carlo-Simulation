@@ -7,12 +7,7 @@ class Player():
     '''
     This class defines the player and dealer,  and stores their cards and calculate the cards score. And also taken into account when a player should take stand
 
-    >>> player2 = Player([('\U0001F4A3','EXPLODE',100), ('\u2660', 'J', 5)], 21)
-    >>> player2.player_stand()
-    True
 
-    >>> player2.card_score()
-    (100, False)
 
     >>> random.seed(1)
     >>> player1 = Player([('\u2663', 'K', 10), ('\u2660', 'J', 10)], 21)
@@ -28,7 +23,12 @@ class Player():
     >>> player1.player_stand()
     True
 
+    >>> player2 = Player([('\U0001F4A3','EXPLODE',100), ('\u2660', 'J', 5)], 21)
+    >>> player2.player_stand()
+    True
 
+    >>> player2.card_score()
+    (100, False)
 
     >>> random.seed(1)
     >>> dealer = Player([('\u2663', 'K', 10), ('\u2660', 'A', 11)], 21, True)
@@ -60,7 +60,6 @@ class Player():
         self.cards_score = []
         self.flag_Ace = False
         self.dealt_card = dealt_card
-        self.Ace_count = 0
         self.target_score = target_score
 
 
@@ -72,32 +71,35 @@ class Player():
         Card Score helps to calculates the score for the player instance
         '''
         score = 0
+        Ace_count = 0
         BlackJack = False
         count = 2
         # Explode = False
 
 
         ## Explode Condition
-        if "EXPLODE" in (self.cards_in_hand[0][1] or self.cards_in_hand[1][1]):
-            score = 100
-            return score, BlackJack
+
 
 
         for i in self.cards_in_hand:
             count -= 1
-            if i[2] == 11:
+            if "EXPLODE" == i[1]:
+                score = 100
+                return score, BlackJack
+
+            elif i[2] == 11:
                 score += i[2]
                 self.flag_Ace = True
-                self.Ace_count += 1
+                Ace_count += 1
             else:
                 score += i[2]
 
         ## Accounting for Ace score
-        while self.Ace_count >= 1:
+        while Ace_count >= 1:
             if score > self.target_score:
-                self.Ace_count -= 1
+                Ace_count -= 1
                 score -= 10
-                if self.Ace_count == 0:
+                if Ace_count == 0:
                     self.flag_Ace = False
             else:
                 break
@@ -129,7 +131,7 @@ class Player():
                 sum(player_bet) / 2):
             return True
 
-        if self.card_score()[0] >= self.target_score - 3:
+        if self.card_score()[0] >= self.target_score - 4:
             return True
 
         else:
@@ -143,16 +145,8 @@ class Player():
             return player_score >= self.target_score - 6
         else:
             ## Ace value is stored as 11 in the card_score
-            if player_score >= (6 + 11):
+            if player_score >= self.target_score - 3:
                 return True
-
-    # def double:
-    ## compulory add a card
-    # and terminal_state
-    # def split():
-    ## A K
-    ## K 1
-    ## Insurance taken
 
 
 class Cards():
@@ -367,14 +361,16 @@ class Game():
         ## Draw
         ## If dealer get Black Jack
         if self.dealer.card_score()[1] == True:
-            deal_win = np.where(self.BJ == True, 'Draw', 'Win')
+            deal_win =np.where(self.BJ == True, 'Draw', 'Win')
             amount_win = np.where(deal_win == 'Win', np.asarray(self.all_players_bet), 0).sum()
         else:
-            deal_win = np.where(self.dealer.card_score()[0] > (np.asarray(self.final_score)), 'Win',
-                                np.where(self.dealer.card_score()[0] == (np.asarray(self.final_score)), 'Draw', 'Lose'))
-            amount_win = np.where(deal_win == 'Win', np.asarray(self.all_players_bet),
-                                  np.where(deal_win == 'Lose', 0 - np.asarray(self.all_players_bet), 0)).sum()
+            temp_score = self.dealer.card_score()[0]
+            if temp_score > self.target_score:
+                deal_win = np.where(np.asarray(self.final_score) <= self.target_score, 'Lose', 'Draw')
+            else:
+                deal_win = np.where(temp_score > (np.asarray(self.final_score)), 'Win', np.where(temp_score == (np.asarray(self.final_score)), 'Draw', 'Lose'))
 
+            amount_win = np.where(deal_win == 'Win', np.asarray(self.all_players_bet), np.where(deal_win == 'Lose', 0-np.asarray(self.all_players_bet), 0)).sum()
             ## Player blackJack Payoff
             amount_win = np.where(self.BJ == True, (BJ_reward * amount_win), amount_win)
         return [deal_win, amount_win]
@@ -437,7 +433,7 @@ def simulation(number_of_simulations, target_score=21, head_cards=True, head_car
     '''
 
     >>> random.seed(1)
-    >>> df = simulation(2, target_score=21, head_cards= True, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = True, detail_summary = False)
+    >>> df = simulation(2, target_score=21, head_cards= True, head_card_value=10, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = True, detail_summary = False)
     Game 0
     Dealers cumulative winning: $110.0
     Dealer Won: $110.0
@@ -450,13 +446,13 @@ def simulation(number_of_simulations, target_score=21, head_cards=True, head_car
     >>> len(df)
     2
 
-    >>> df1 = simulation(4, target_score=21, head_cards =True, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = False, detail_summary = False  )
+    >>> df1 = simulation(4, target_score=21, head_cards =True, head_card_value=10,dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = False, detail_summary = False  )
     >>> df1.columns
     Index(['Game', 'Won', 'Cumulative'], dtype='object')
     >>> len(df1)
     4
 
-    >>> df2 = simulation(4, target_score=21, head_cards =True, dealer_advantage = True,BJ_reward = 1.5, explosion = True, Summary = False, detail_summary = False )
+    >>> df2 = simulation(4, target_score=21, head_cards =True, head_card_value=10, dealer_advantage = True,BJ_reward = 1.5, explosion = True, Summary = False, detail_summary = False )
     >>> df2.columns
     Index(['Game', 'Won', 'Cumulative'], dtype='object')
     '''
@@ -470,7 +466,7 @@ def simulation(number_of_simulations, target_score=21, head_cards=True, head_car
         instance_call = Generate_one_simulation(cumulative_win, target_score, head_cards, head_card_value,
                                                 dealer_advantage, BJ_reward, explosion, Summary, detail_summary )
         Dealer_Won.append(instance_call[0])
-        cumulative_win += instance_call[1]
+        cumulative_win = instance_call[1]
     Result = pd.DataFrame({'Game': Game, 'Won': Dealer_Won})
     Result['Cumulative'] = Result['Won'].cumsum(axis=0)
     return Result
