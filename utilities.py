@@ -7,6 +7,13 @@ class Player():
     '''
     This class defines the player and dealer,  and stores their cards and calculate the cards score. And also taken into account when a player should take stand
 
+    >>> player2 = Player([('\U0001F4A3','EXPLODE',100), ('\u2660', 'J', 5)], 21)
+    >>> player2.player_stand()
+    True
+
+    >>> player2.card_score()
+    (100, False)
+
     >>> random.seed(1)
     >>> player1 = Player([('\u2663', 'K', 10), ('\u2660', 'J', 10)], 21)
     >>> player1.player_stand()
@@ -20,6 +27,7 @@ class Player():
     (21, False)
     >>> player1.player_stand()
     True
+
 
 
     >>> random.seed(1)
@@ -38,7 +46,8 @@ class Player():
 
     '''
 
-    def __init__(self, dealt_card, target_score=21, dealer=False, explosion=False):
+
+    def __init__(self, dealt_card, target_score=21, dealer=False):
         '''
         This function take the necessary inputs required for the class Player and creates the necessary variable
 
@@ -53,7 +62,7 @@ class Player():
         self.dealt_card = dealt_card
         self.Ace_count = 0
         self.target_score = target_score
-        self.explosion = explosion
+
 
         if not self.dealer:
             self.bet = random.randint(1, 10) * 10
@@ -65,7 +74,14 @@ class Player():
         score = 0
         BlackJack = False
         count = 2
-        #Explode = False
+        # Explode = False
+
+
+        ## Explode Condition
+        if "EXPLODE" in (self.cards_in_hand[0][1] or self.cards_in_hand[1][1]):
+            score = 100
+            return score, BlackJack
+
 
         for i in self.cards_in_hand:
             count -= 1
@@ -86,10 +102,6 @@ class Player():
             else:
                 break
 
-        ## Explode Condition
-        if "100" in self.cards_in_hand and self.explosion == True:
-            score = 0
-            return score
 
         ## BlackJack Condition
         if score == self.target_score:
@@ -168,7 +180,7 @@ class Cards():
 
     '''
 
-    def __init__(self, number_of_player: int, head_cards: bool = True, head_card_value: int = 10, explosion = False):
+    def __init__(self, number_of_player: int, head_cards: bool = True, head_card_value: int = 10, explosion=False):
         '''
         This function take the necessary inputs required for the class Cards and creates the necessary variable
         :param number_of_player: self explainatory
@@ -215,9 +227,14 @@ class Cards():
         else:
             temp = 10
 
-        if top_card_on_deck % temp == 1:
+        if top_card_on_deck == 100:
+            card = 'EXPLODE'
+            card_score = 100
+
+        elif top_card_on_deck % temp == 1:
             card = 'A'
             card_score = 11
+
         else:
             card = str(top_card_on_deck % temp)
             card_score = top_card_on_deck % temp
@@ -233,8 +250,7 @@ class Cards():
             elif top_card_on_deck % temp == 0:
                 card = 'K'
                 card_score = self.head_card_value
-            elif top_card_on_deck == 100:
-                card = 'Explode'
+
         else:
             if top_card_on_deck % temp == 0:
                 card = '10'
@@ -242,18 +258,21 @@ class Cards():
 
         ## Suit of the card
         # Reference: https://www.youtube.com/watch?v=IsklrLQE88Y&ab_channel=AllTech
+        # Reference link for Bomb : https://www.compart.com/en/unicode/U+1F4A3
         # Club - \u2663
         # Spades - \u2660
         # Diamond - \u2666
         # Heart - \u2665
-        if top_card_on_deck < temp + 1:
+        # Bomb - '\U0001F4A3'
+
+        if top_card_on_deck == 100:
+            suit = '\U0001F4A3'
+        elif top_card_on_deck < temp + 1:
             suit = '\u2663'
         elif top_card_on_deck < (2 * temp) + 1:
             suit = '\u2660'
         elif top_card_on_deck < (3 * temp) + 1:
             suit = '\u2666'
-        elif top_card_on_deck == 100:
-            suit = '\U0001F4A3'
         else:
             suit = '\u2665'
 
@@ -313,7 +332,7 @@ class Game():
         self.BJ = []
         self.all_players_bet = []
         self.target_score = target_score
-        self.dealer = Player(self.player_cards[-1], self.target_score, dealer=True, explosion = False)
+        self.dealer = Player(self.player_cards[-1], self.target_score, dealer=True)
 
     def creating_player_instance(self):
         for i in range(1, self.number_of_player + 1):
@@ -400,7 +419,7 @@ head_card_value
 
 
 def Generate_one_simulation(cumulative_win, target_score=21, head_cards=True, head_card_value=10, dealer_advantage=True,
-                            BJ_reward=1.5, Summary=True, detail_summary=True,explosion = False):
+                            BJ_reward=1.5, explosion=False, Summary=True, detail_summary=True):
     game_instance = Game(target_score, head_cards, head_card_value, explosion)
     game_instance.creating_player_instance()
     game_instance.contender_game()
@@ -414,11 +433,11 @@ def Generate_one_simulation(cumulative_win, target_score=21, head_cards=True, he
 
 
 def simulation(number_of_simulations, target_score=21, head_cards=True, head_card_value=10, dealer_advantage=True,
-               BJ_reward=1.5, Summary=True, detail_summary=True, explosion = False):
+               BJ_reward=1.5,explosion=False, Summary=True, detail_summary=True ):
     '''
 
     >>> random.seed(1)
-    >>> df = simulation(2, target_score=21, head_cards= True, dealer_advantage = True,BJ_reward = 1.5, Summary = True, detail_summary = False, explosion = False)
+    >>> df = simulation(2, target_score=21, head_cards= True, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = True, detail_summary = False)
     Game 0
     Dealers cumulative winning: $110.0
     Dealer Won: $110.0
@@ -431,13 +450,15 @@ def simulation(number_of_simulations, target_score=21, head_cards=True, head_car
     >>> len(df)
     2
 
-    >>> df1 = simulation(4, target_score=21, head_cards =True, dealer_advantage = True,BJ_reward = 1.5, Summary = False, detail_summary = False, explosion = False )
+    >>> df1 = simulation(4, target_score=21, head_cards =True, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = False, detail_summary = False  )
     >>> df1.columns
     Index(['Game', 'Won', 'Cumulative'], dtype='object')
     >>> len(df1)
     4
 
-     >>> df2 = simulation(4, target_score=21, head_cards =True, dealer_advantage = True,BJ_reward = 1.5, Summary = False, detail_summary = False, explosion = True )
+    >>> df2 = simulation(4, target_score=21, head_cards =True, dealer_advantage = True,BJ_reward = 1.5, explosion = True, Summary = False, detail_summary = False )
+    >>> df2.columns
+    Index(['Game', 'Won', 'Cumulative'], dtype='object')
     '''
     Game = []
     Dealer_Won = []
@@ -447,7 +468,7 @@ def simulation(number_of_simulations, target_score=21, head_cards=True, head_car
         if Summary:
             print(f"Game {i}")
         instance_call = Generate_one_simulation(cumulative_win, target_score, head_cards, head_card_value,
-                                                dealer_advantage, BJ_reward, Summary, detail_summary, explosion)
+                                                dealer_advantage, BJ_reward, explosion, Summary, detail_summary )
         Dealer_Won.append(instance_call[0])
         cumulative_win += instance_call[1]
     Result = pd.DataFrame({'Game': Game, 'Won': Dealer_Won})
@@ -456,4 +477,6 @@ def simulation(number_of_simulations, target_score=21, head_cards=True, head_car
 
 
 if __name__ == '__main__':
-    card = Cards(2)
+    #card = Cards(2)
+    player2 = Player([('\U0001F4A3', 'EXPLODE', 100), ('\u2660', 'J', 10)], 21)
+    player2.player_stand()
