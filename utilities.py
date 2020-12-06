@@ -7,8 +7,6 @@ class Player():
     '''
     This class defines the player and dealer,  and stores their cards and calculate the cards score. And also taken into account when a player should take stand
 
-
-
     >>> random.seed(1)
     >>> player1 = Player([('\u2663', 'K', 10), ('\u2660', 'J', 10)], 21)
     >>> player1.player_stand()
@@ -43,11 +41,10 @@ class Player():
     (12, False)
     >>> dealer.dealer_stand([20,18], [50,60])
     False
-
     '''
 
 
-    def __init__(self, dealt_card, target_score=21, dealer=False):
+    def __init__(self, dealt_card: list, target_score:int  =21, dealer: bool =False):
         '''
         This function take the necessary inputs required for the class Player and creates the necessary variable
 
@@ -66,19 +63,14 @@ class Player():
         if not self.dealer:
             self.bet = random.randint(1, 10) * 10
 
-    def card_score(self):
+    def card_score(self) -> tuple:
         '''
-        Card Score helps to calculates the score for the player instance
+        Card Score helps to calculates the score for the player instance and whether they have a Blackjack or not
         '''
         score = 0
         Ace_count = 0
         BlackJack = False
         count = 2
-        # Explode = False
-
-
-        ## Explode Condition
-
 
 
         for i in self.cards_in_hand:
@@ -111,18 +103,20 @@ class Player():
                 BlackJack = True
         return score, BlackJack
 
-    def update_cards_in_hand(self, card):
+    def update_cards_in_hand(self, card: tuple):
         '''
         Updated the player's cards in hand
         :param card: The new card drawn from the deck
         '''
         self.cards_in_hand.append(card)
 
-    def dealer_stand(self, player_score: list, player_bet: list):
+    def dealer_stand(self, player_score: list, player_bet: list) -> bool:
         '''
         The conditions where the dealer decides to take a stand on whether to pick another card or not
+
         :player_score: The list
-        :player_bet:
+        :player_bet: Amount bet by the player
+        :return whether dealer should take a stand or not
         '''
         # print(np.asarray(player_score) < 19)
         # print(np.where(self.card_score() >= 1 ,1, 0).sum())
@@ -137,7 +131,12 @@ class Player():
         else:
             return False
 
-    def player_stand(self):
+    def player_stand(self) -> bool:
+        '''
+        This function checks if the player should take a stand or not
+
+        :return boolean value whether player should take a stand or not
+        '''
         player_score = self.card_score()[0]
         # true means terminal_state has reached
         ############################################## ace value
@@ -147,6 +146,7 @@ class Player():
             ## Ace value is stored as 11 in the card_score
             if player_score >= self.target_score - 3:
                 return True
+
 
 
 class Cards():
@@ -177,7 +177,11 @@ class Cards():
     def __init__(self, number_of_player: int, head_cards: bool = True, head_card_value: int = 10, explosion=False):
         '''
         This function take the necessary inputs required for the class Cards and creates the necessary variable
-        :param number_of_player: self explainatory
+
+        :param number_of_player: number of players in the game
+        :param head_cards: deck should have head cards or not
+        :param head_card_value: Value of the head cards should be
+        :param explosion: deck contains explosion cards
         '''
         ## try combing both
         self.head_cards = head_cards
@@ -195,6 +199,7 @@ class Cards():
     def dealt_cards(self) -> list:
         '''
         This function dealt the cards to player and dealer, based on there turn
+
         :return: list of list containing tuples with card and suit
         '''
         ## each player and deal are dealt with 2 cards_score
@@ -211,6 +216,7 @@ class Cards():
     def remove_card_from_deck(self) -> tuple:
         '''
         This functions removes the top card from deck
+
         :return: list of tuple with card and suit
         '''
         top_card_on_deck = self.deck[0]
@@ -276,9 +282,6 @@ class Cards():
         return (suit, card, card_score)
 
 
-### remove head cards
-
-
 class Game():
     '''
     This class interacts the with Player and Cards class and makes the game workable
@@ -289,36 +292,21 @@ class Game():
     >>> game1.contender_game()
     >>> game1.dealer_game(dealer_advantage = True)
     >>> game1.win_loss(BJ_reward = 1.5)
-    [array(['Win', 'Draw', 'Win'], dtype='<U4'), array(110.)]
-
-    >>> game1.summary(detail_summary= True)
-    Dealer Won: $110.0
-    Dealer Cards: ♠K |♥J |
-    Dealer Score 20
-    <BLANKLINE>
-    Player1:
-    Cards ♣3 |♠7 |♠3 |♦4 |
-    Player Score: 17
-    Player Bet: 20
-    Player: Lose
-    <BLANKLINE>
-    Player2:
-    Cards ♦K |♣10 |
-    Player Score: 20
-    Player Bet: 60
-    Player: Draw
-    <BLANKLINE>
-    Player3:
-    Cards ♣Q |♠6 |
-    Player Score: 16
-    Player Bet: 90
-    Player: Lose
-    <BLANKLINE>
+    [array(['Win', 'Draw', 'Win'], dtype='<U4'), 110.0]
 
 
     '''
 
-    def __init__(self, target_score=21, head_cards=True, head_card_value=10, explosion=False):
+    def __init__(self, target_score:int = 21, head_cards: bool = True, head_card_value: int = 10, explosion: bool = False):
+        '''
+        Defining required variable for game class
+
+        :param target_score: target score for Blackjack
+        :param head_cards: whether game should contain head cards or not
+        :param head_card_value: what should be the value of head cards
+        :param explosion: whether game should contain explosion card
+        '''
+
         self.number_of_player = random.randint(2, 7)
         self.deck = Cards(self.number_of_player, head_cards, head_card_value, explosion)
         self.player_cards = self.deck.dealt_cards()
@@ -329,12 +317,18 @@ class Game():
         self.dealer = Player(self.player_cards[-1], self.target_score, dealer=True)
 
     def creating_player_instance(self):
+        '''
+        This function define players/contenders using player class
+        '''
         for i in range(1, self.number_of_player + 1):
             if i <= self.number_of_player + 1:
                 # Reference :https://stackoverflow.com/questions/6181935/how-do-you-create-different-variable-names-while-in-a-loop
                 exec(f'self.contender{i} = Player(self.player_cards[{i - 1}], self.target_score)')
 
     def contender_game(self):
+        '''
+        This function check when should player hit and take a stand. Also checks if the player got a Blackjack or not
+        '''
         for i in range(1, self.number_of_player + 1):
             while not (eval(f'self.contender{i}.player_stand()')):
                 card = self.deck.remove_card_from_deck()
@@ -344,9 +338,12 @@ class Game():
             self.all_players_bet.append(eval(f'self.contender{i}.bet'))
         # Score more than 21 than player lose
         self.final_score = (
-            np.where(np.asarray(self.final_score) <= self.target_score, np.asarray(self.final_score), 0)).tolist()
+            np.where(np.asarray(self.final_score) <= self.target_score, np.asarray(self.final_score), 100)).tolist()
 
-    def dealer_game(self, dealer_advantage=True):
+    def dealer_game(self, dealer_advantage: bool =True):
+        '''
+        This function check when should dealer hit and take a stand. Also checks if the dealer got a Blackjack or not
+        '''
         if dealer_advantage:
             while not self.dealer.dealer_stand(self.final_score, self.all_players_bet):
                 card = self.deck.remove_card_from_deck()
@@ -356,28 +353,38 @@ class Game():
                 card = self.deck.remove_card_from_deck()
                 self.dealer.update_cards_in_hand(card)
 
-    def win_loss(self, BJ_reward=1.5):
-        ## Win-loss for Dealer
-        ## Draw
-        ## If dealer get Black Jack
+    def win_loss(self, BJ_reward: float =1.5) -> list:
+        '''
+        This function check if dealer won or loss and the amount won by him (against each player)
+
+        :param BJ_reward: how much times the player should get the reward incase of black jack
+        :return a list of lists that contains. The first list contains whether dealer won or loss and the second list contain the amount won or lost by the dealer
+        '''
         if self.dealer.card_score()[1] == True:
-            deal_win =np.where(self.BJ == True, 'Draw', 'Win')
+            deal_win =np.where(np.asarray(self.BJ) == True, 'Draw', 'Win')
             amount_win = np.where(deal_win == 'Win', np.asarray(self.all_players_bet), 0).sum()
         else:
             temp_score = self.dealer.card_score()[0]
             if temp_score > self.target_score:
                 deal_win = np.where(np.asarray(self.final_score) <= self.target_score, 'Lose', 'Draw')
             else:
+                self.final_score = (np.where(np.asarray(self.final_score) == 100, 0, np.asarray(self.final_score))).tolist()
                 deal_win = np.where(temp_score > (np.asarray(self.final_score)), 'Win', np.where(temp_score == (np.asarray(self.final_score)), 'Draw', 'Lose'))
 
-            amount_win = np.where(deal_win == 'Win', np.asarray(self.all_players_bet), np.where(deal_win == 'Lose', 0-np.asarray(self.all_players_bet), 0)).sum()
+            amount_win = np.where(deal_win == 'Win', np.asarray(self.all_players_bet), np.where(deal_win == 'Lose', 0-np.asarray(self.all_players_bet), 0))
             ## Player blackJack Payoff
-            amount_win = np.where(self.BJ == True, (BJ_reward * amount_win), amount_win)
+            amount_win = np.where(np.asarray(self.BJ) == True, (BJ_reward * amount_win), amount_win)
+            amount_win = amount_win.sum()
+
         return [deal_win, amount_win]
 
-    def summary(self, detail_summary=True):
+    def summary(self, detail_summary: bool =True):
+        '''
+        This function prints the summary
+
+        :param detail_summary: whether to print detail summary or not
+        '''
         dealer_won = self.win_loss()
-        print(f"Dealer Won: ${dealer_won[1]}")
 
         if detail_summary:
             print("Dealer Cards: ", end='')
@@ -386,8 +393,8 @@ class Game():
                 print(f"{dealer_c[1]}", end=' |')
             print(f"\nDealer Score {self.dealer.card_score()[0]}\n")
 
-            Winner = dealer_won[0]
-            Player_won = np.where(Winner == 'Draw', 'Draw', np.where(Winner == 'Lose', 'Win', 'Lose'))
+            Winner = np.asarray(dealer_won[0])
+            Player_won = (np.where(Winner == 'Draw', 'Draw', np.where(Winner == 'Lose', 'Win', 'Lose'))).tolist()
 
             for i in range(1, self.number_of_player + 1):
                 print(f"Player{i}:")
@@ -401,7 +408,7 @@ class Game():
                 print(f"\nPlayer Score: {score[0]}")
                 bet = eval(f'self.contender{i}.bet')
                 print(f"Player Bet: {bet}")
-                print(f"Player: {Player_won[i - 1]}", end='\n\n')
+                print(f"Player: {Player_won[i-1]}", end='\n\n')
 
 
 '''
@@ -410,12 +417,34 @@ Target - 21
 Head_card or not
 There will be no change in the dealer’s winning chance, if the cards of both the player and dealer are disclosed at the end of the game.
 head_card_value
-
+Black Jack Reward
+explosion card
 '''
 
 
-def Generate_one_simulation(cumulative_win, target_score=21, head_cards=True, head_card_value=10, dealer_advantage=True,
-                            BJ_reward=1.5, explosion=False, Summary=True, detail_summary=True):
+def Generate_one_simulation(cumulative_win: float, target_score:int = 21, head_cards:bool = True, head_card_value:int = 10, dealer_advantage: bool = True,
+                            BJ_reward: float = 1.5, explosion: bool=False, Summary: bool=True, detail_summary: bool=True) -> tuple:
+    '''
+    This functions generates one game simulation
+
+    :param cumulative_win: total winning of previous games
+    :param target_score: Target score for game of Blackjack
+    :param head_cards: whether game should have head cards or not
+    :param head_card_value: What should be the value of head cards
+    :param dealer_advantage: Should dealer be given advantage/ should dealer know players cards.
+    :param BJ_reward: Amound of rewards players should earn was getting perfect Blackjack
+    :param explosion: Should deck contain explosion card
+    :param Summary: Print summary or not
+    :param detail_summary: Print detail summary or not
+    :return a tuple with 2 elements, first with current game winning, and second with cumulative winnings
+
+    >>> Generate_one_simulation(0 , target_score = 100, head_cards = True, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Target Score should be less than 100
+    '''
+    if target_score >= 100:
+        raise ValueError("Target Score should be less than 100")
     game_instance = Game(target_score, head_cards, head_card_value, explosion)
     game_instance.creating_player_instance()
     game_instance.contender_game()
@@ -424,23 +453,32 @@ def Generate_one_simulation(cumulative_win, target_score=21, head_cards=True, he
     cumulative_win += dealer_winning
     if Summary:
         print(f"Dealers cumulative winning: ${cumulative_win}")
+        print(f"Dealer Won: ${dealer_winning}")
+
         game_instance.summary(detail_summary)
     return dealer_winning, cumulative_win
 
 
-def simulation(number_of_simulations, target_score=21, head_cards=True, head_card_value=10, dealer_advantage=True,
-               BJ_reward=1.5,explosion=False, Summary=True, detail_summary=True ):
+def simulation(number_of_simulations: int, target_score: int=21, head_cards:bool =True, head_card_value: int =10, dealer_advantage: bool=True,
+               BJ_reward:float=1.5,explosion:bool =False, Summary:bool =True, detail_summary: bool =True) -> 'DataFrame':
     '''
+    This functions generates multiple game simulation
+
+    :param number_of_simulations: Number of time the simulation should run
+    :param cumulative_win: total winning of previous games
+    :param target_score: Target score for game of Blackjack
+    :param head_cards: whether game should have head cards or not
+    :param head_card_value: What should be the value of head cards
+    :param dealer_advantage: Should dealer be given advantage/ should dealer know players cards.
+    :param BJ_reward: Amound of rewards players should earn was getting perfect Blackjack
+    :param explosion: Should deck contain explosion card
+    :param Summary: Print summary or not
+    :param detail_summary: Print detail summary or not
+    :return a dataframe with 3 column (game number, win for the game, and cumulative winning )
+
 
     >>> random.seed(1)
-    >>> df = simulation(2, target_score=21, head_cards= True, head_card_value=10, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = True, detail_summary = False)
-    Game 0
-    Dealers cumulative winning: $110.0
-    Dealer Won: $110.0
-    Game 1
-    Dealers cumulative winning: $380.0
-    Dealer Won: $270.0
-
+    >>> df = simulation(2, target_score=21, head_cards= True, head_card_value=10, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = False, detail_summary = False)
     >>> df.columns
     Index(['Game', 'Won', 'Cumulative'], dtype='object')
     >>> len(df)
