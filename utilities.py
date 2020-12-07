@@ -558,10 +558,14 @@ def Generate_one_simulation(cumulative_win: float, target_score:int = 21, head_c
         raise ValueError("Target Score should be in range 0 to  100 (not inclusive 0 and 100)")
 
     if head_cards == False:
+        ## Without head card the total score for 7 players and one dealer be  will be 220/8 = 27.5
+        ## But some players will be above the total score and some will be below, so we assume 25 is good
         if target_score > 25:
             raise ValueError("Target Score should be less than 25, if the game has no head cards")
     else:
-        if target_score+head_card_value > 25 + ((head_card_value*12)/8):
+        ## There are 12 head cards in a game
+        ## 7 Player and 1 dealer
+        if target_score > 25 + ((head_card_value*12)/8):
             raise ValueError("Target Score should take in account the head cards value")
 
     if not Summary:
