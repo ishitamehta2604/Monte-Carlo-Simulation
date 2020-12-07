@@ -422,43 +422,6 @@ explosion card
 '''
 
 
-def Generate_one_simulation(cumulative_win: float, target_score:int = 21, head_cards:bool = True, head_card_value:int = 10, dealer_advantage: bool = True,
-                            BJ_reward: float = 1.5, explosion: bool=False, Summary: bool=True, detail_summary: bool=True) -> tuple:
-    '''
-    This functions generates one game simulation
-
-    :param cumulative_win: total winning of previous games
-    :param target_score: Target score for game of Blackjack
-    :param head_cards: whether game should have head cards or not
-    :param head_card_value: What should be the value of head cards
-    :param dealer_advantage: Should dealer be given advantage/ should dealer know players cards.
-    :param BJ_reward: Amound of rewards players should earn was getting perfect Blackjack
-    :param explosion: Should deck contain explosion card
-    :param Summary: Print summary or not
-    :param detail_summary: Print detail summary or not
-    :return a tuple with 2 elements, first with current game winning, and second with cumulative winnings
-
-    >>> Generate_one_simulation(0 , target_score = 100, head_cards = True, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
-    Traceback (most recent call last):
-    ...
-    ValueError: Target Score should be less than 100
-    '''
-    if target_score >= 100:
-        raise ValueError("Target Score should be less than 100")
-    game_instance = Game(target_score, head_cards, head_card_value, explosion)
-    game_instance.creating_player_instance()
-    game_instance.contender_game()
-    game_instance.dealer_game(dealer_advantage)
-    dealer_winning = game_instance.win_loss(BJ_reward)[1]
-    cumulative_win += dealer_winning
-    if Summary:
-        print(f"Dealers cumulative winning: ${cumulative_win}")
-        print(f"Dealer Won: ${dealer_winning}")
-
-        game_instance.summary(detail_summary)
-    return dealer_winning, cumulative_win
-
-
 def simulation(number_of_simulations: int, target_score: int=21, head_cards:bool =True, head_card_value: int =10, dealer_advantage: bool=True,
                BJ_reward:float=1.5,explosion:bool =False, Summary:bool =True, detail_summary: bool =True) -> 'DataFrame':
     '''
@@ -490,10 +453,34 @@ def simulation(number_of_simulations: int, target_score: int=21, head_cards:bool
     >>> len(df1)
     4
 
-    >>> df2 = simulation(4, target_score=21, head_cards =True, head_card_value=10, dealer_advantage = True,BJ_reward = 1.5, explosion = True, Summary = False, detail_summary = False )
+    >>> df2 = simulation(4, target_score=21, head_cards =True, head_card_value=10, dealer_advantage = True,BJ_reward = 1, explosion = True, Summary = False, detail_summary = False )
     >>> df2.columns
     Index(['Game', 'Won', 'Cumulative'], dtype='object')
+
+    >>> simulation('Four', target_score=21, head_cards =True, head_card_value=10, dealer_advantage = True, BJ_reward = 1, explosion = True, Summary = False, detail_summary = False )
+    Traceback (most recent call last):
+    ...
+    ValueError: Check the input datatype
+
+    >>> simulation(4, target_score=21, head_cards =True, head_card_value=10, dealer_advantage = True,BJ_reward = 1, explosion = True, Summary = False, detail_summary = True )
+    Traceback (most recent call last):
+    ...
+    ValueError: Summary should be True to print detail Summary
+
     '''
+    ## Error Checking
+    if not (isinstance(number_of_simulations, int) & isinstance(target_score, int) & \
+             isinstance(head_cards, bool) & isinstance(head_card_value, int) & isinstance(dealer_advantage, bool) & \
+            (isinstance(BJ_reward, float) | isinstance(BJ_reward, int)) & isinstance(explosion, bool) & \
+            isinstance(Summary, bool) & isinstance(detail_summary, bool)):
+        raise ValueError("Check the input datatype")
+
+
+    if not Summary:
+        if detail_summary:
+            raise ValueError("Summary should be True to print detail Summary")
+
+
     Game = []
     Dealer_Won = []
     cumulative_win = 0
@@ -510,7 +497,93 @@ def simulation(number_of_simulations: int, target_score: int=21, head_cards:bool
     return Result
 
 
+def Generate_one_simulation(cumulative_win: float, target_score:int = 21, head_cards:bool = True, head_card_value:int = 10, dealer_advantage: bool = True,
+                            BJ_reward: float = 1.5, explosion: bool=False, Summary: bool=True, detail_summary: bool=True) -> tuple:
+    '''
+    This functions generates one game simulation
+
+    :param cumulative_win: total winning of previous games
+    :param target_score: Target score for game of Blackjack
+    :param head_cards: whether game should have head cards or not
+    :param head_card_value: What should be the value of head cards
+    :param dealer_advantage: Should dealer be given advantage/ should dealer know players cards.
+    :param BJ_reward: Amound of rewards players should earn was getting perfect Blackjack
+    :param explosion: Should deck contain explosion card
+    :param Summary: Print summary or not
+    :param detail_summary: Print detail summary or not
+    :return a tuple with 2 elements, first with current game winning, and second with cumulative winnings
+
+    >>> Generate_one_simulation(0 , target_score = 100, head_cards = True, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Target Score should be in range 0 to  100 (not inclusive 0 and 100)
+
+    >>> Generate_one_simulation(0 , target_score = 0, head_cards = True, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Target Score should be in range 0 to  100 (not inclusive 0 and 100)
+
+
+    >>> Generate_one_simulation(0 , target_score = 100, head_cards = 1, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Check the input datatype
+
+    >>> Generate_one_simulation(0 , target_score = 27, head_cards = False, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Target Score should be less than 25, if the game has no head cards
+
+    >>> Generate_one_simulation(0 , target_score = 42, head_cards = True, head_card_value = 10, dealer_advantage = True, BJ_reward = 1.5, explosion=False, Summary=True, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Target Score should take in account the head cards value
+
+    >>> Generate_one_simulation(0 , target_score = 21, head_cards = True, head_card_value = 10, dealer_advantage = True, BJ_reward = 1, explosion=True, Summary=False, detail_summary=True)
+    Traceback (most recent call last):
+    ...
+    ValueError: Summary should be True to print detail Summary
+    '''
+    ## Error Checking
+    if not (isinstance(target_score, int) & \
+            isinstance(head_cards, bool) & isinstance(head_card_value, int) & isinstance(dealer_advantage, bool) & \
+            (isinstance(BJ_reward, float) | isinstance(BJ_reward, int)) & isinstance(explosion, bool) & \
+            isinstance(Summary, bool) & isinstance(detail_summary, bool)):
+        raise ValueError("Check the input datatype")
+
+    if not (isinstance(cumulative_win,float) | isinstance(cumulative_win, int) | isinstance(cumulative_win, np.int32)):
+        raise ValueError("cumulative_win datatype wrong")
+
+    if ((target_score <= 0 ) | (target_score >= 100)):
+        raise ValueError("Target Score should be in range 0 to  100 (not inclusive 0 and 100)")
+
+    if head_cards == False:
+        if target_score > 25:
+            raise ValueError("Target Score should be less than 25, if the game has no head cards")
+    else:
+        if target_score+head_card_value > 25 + ((head_card_value*12)/8):
+            raise ValueError("Target Score should take in account the head cards value")
+
+    if not Summary:
+        if detail_summary:
+            raise ValueError("Summary should be True to print detail Summary")
+
+
+
+    game_instance = Game(target_score, head_cards, head_card_value, explosion)
+    game_instance.creating_player_instance()
+    game_instance.contender_game()
+    game_instance.dealer_game(dealer_advantage)
+    dealer_winning = game_instance.win_loss(BJ_reward)[1]
+    cumulative_win += dealer_winning
+    if Summary:
+        print(f"Dealers cumulative winning: ${cumulative_win}")
+        print(f"Dealer Won: ${dealer_winning}")
+
+        game_instance.summary(detail_summary)
+    return dealer_winning, cumulative_win
+
+
 if __name__ == '__main__':
-    #card = Cards(2)
-    player2 = Player([('\U0001F4A3', 'EXPLODE', 100), ('\u2660', 'J', 10)], 21)
-    player2.player_stand()
+    df = simulation(2, target_score=21, head_cards= True, head_card_value=10, dealer_advantage = True,BJ_reward = 1.5, explosion = False, Summary = False, detail_summary = False)
+    print(df)
