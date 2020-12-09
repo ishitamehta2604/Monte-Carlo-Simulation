@@ -1,5 +1,7 @@
-# 2020Fall_projects
-Introduction:
+Team Members:
+Ishita Mehta, Karan Chhabra
+
+# Monte Carlo Simulation: Variations of Blackjack
 The aim of the project was to design a game which is equally profitable to club as Black jack and give the player decent chance of winning.
 
 [![Blackjack Rules](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/blob/main/Images%20of%20Graphs/Rules.jpg)]( https://www.youtube.com/watch?v=5bWpnABkU-Y&ab_channel=CrazyVegasOnlineCasino)
