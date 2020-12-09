@@ -21,14 +21,19 @@ Random Variables:
 Variations:
 •	Variable Target Score <BR>
 This help to change the target score of the game from 21 to something else.  <BR>
+    
 •	If Game Should have Head Cards or not  <BR>
 It help to determine if the game should have head face cards or not.  <BR>
+    
 •	Variable Value of Head Cards <BR>
 Define the value of head cards other than 10. <BR>
+    
 •	Player cards are disclosed at the end of the game <BR>
 Dealer can't know the cards of player till the end of the game. <BR>
+    
 •	Blackjack Reward <BR>
 Changing the perfect black jack reward from 3:2(1.5 times) to something else.  <BR>
+    
 •	Explosion Card <BR>
 The player or dealer who get this card losses <BR>
 
@@ -61,13 +66,13 @@ We reject the null hypothesis.
 NEW GAME:
 A game created with different combination of parameters which is a potentially good game to be played in a club along with black jack
 
-Number of simulations: 100000
-Target Score: 32
-Head Card: True
-Head Card Value: 12
-Should the Dealer be given the advantage: True
-Perfect Blackjack Reward: 200
-Explosion card: True
+Number of simulations: 100000 <br>
+Target Score: 32 <br>
+Head Card: True <br>
+Head Card Value: 12 <br>
+Should the Dealer be given the advantage: True <br>
+Perfect Blackjack Reward: 200 <br>
+Explosion card: True <br>
 
 ![NEW GAME](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/blob/main/Images%20of%20Graphs/NEW%20GAME%20Variation.jpg)
 
