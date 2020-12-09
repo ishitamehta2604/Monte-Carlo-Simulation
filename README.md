@@ -19,16 +19,22 @@ Random Variables:
 •	Players Bet<br>
 
 Variations:
+
 •	Variable Target Score <BR>
 This help to change the target score of the game from 21 to something else.  <BR>
+    
 •	If Game Should have Head Cards or not  <BR>
 It help to determine if the game should have head face cards or not.  <BR>
+    
 •	Variable Value of Head Cards <BR>
 Define the value of head cards other than 10. <BR>
+    
 •	Player cards are disclosed at the end of the game <BR>
 Dealer can't know the cards of player till the end of the game. <BR>
+    
 •	Blackjack Reward <BR>
 Changing the perfect black jack reward from 3:2(1.5 times) to something else.  <BR>
+    
 •	Explosion Card <BR>
 The player or dealer who get this card losses <BR>
 
