@@ -79,7 +79,8 @@ Explosion card: True <br>
 
 
 
-Reference:
+References:
+
 https://www.youtube.com/watch?v=5bWpnABkU-Y&ab_channel=CrazyVegasOnlineCasino <br>
 https://www.247blackjack.com/ <br>
 https://uiuc-ischool-dataviz.github.io/is445AOG_fall2020/week05/ <br>
