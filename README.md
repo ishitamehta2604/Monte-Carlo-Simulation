@@ -2,7 +2,7 @@
 Introduction:
 The aim of the project was to design a game which is equally profitable to club as Black jack and give the player decent chance of winning.
 
-[![Blackjack Rules](Images of Graphs/Rules.jpg)]( https://www.youtube.com/watch?v=5bWpnABkU-Y&ab_channel=CrazyVegasOnlineCasino)
+[![Blackjack Rules](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/Rules.jpg)]( https://www.youtube.com/watch?v=5bWpnABkU-Y&ab_channel=CrazyVegasOnlineCasino)
 
 Assumptions:
 
@@ -38,22 +38,22 @@ Blue line represents the basic black jack game
 Orange line represents the game with the specific variations
 
 1 - There will be no change in the dealer’s chances of winning, if the cards of both the player and dealer are disclosed at the end of the game.<br>
-![Hypothesis 1](Images of Graphs/Hypothesis%201.png)
+![Hypothesis 1](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/Hypothesis%201.png)
 
 We reject the null hypothesis. 
 
 
 2 - There will be no change in the dealer’s chances of winning, if the player loses by receiving a Blackjack in the first two dealt cards.
-![Hypothesis 2](Images of Graphs/Hypothesis%202.jpg)
+![Hypothesis 2](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/Hypothesis%202.jpg)
 
 We reject the null hypothesis. 
 
 3 - The players chances of winning does not change when the chosen head card value comes closer to the target score.
-![Hypothesis 3](Images of Graphs/hypothesis3.jpg)
+![Hypothesis 3](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/hypothesis3.jpg)
 We reject the null hypothesis.
 
 4 -There will be no change in the player’s chances of winning, When the target is increased or decreased over the default value of 21, keeping the other parameters constant
-![Hypothesis 4](Images of Graphs/Hypothesis%204.jpg)
+![Hypothesis 4](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/Hypothesis%204.jpg)
 
 We reject the null hypothesis.
 
@@ -69,7 +69,7 @@ Should the Dealer be given the advantage: True
 Perfect Blackjack Reward: 200
 Explosion card: True
 
-![NEW GAME](Images of Graphs/NEW%20GAME%20Variation.jpg)
+![NEW GAME](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/NEW%20GAME%20Variation.jpg)
 
 
 
