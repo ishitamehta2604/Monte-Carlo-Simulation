@@ -38,7 +38,7 @@ Blue line represents the basic black jack game
 Orange line represents the game with the specific variations
 
 1 - There will be no change in the dealer’s chances of winning, if the cards of both the player and dealer are disclosed at the end of the game.<br>
-![Hypothesis 1](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/Images of Graphs/Hypothesis%201.png)
+![Hypothesis 1](https://github.com/ishitamehta2604/Monte-Carlo-Simulation/blob/main/Images%20of%20Graphs/Hypothesis%201.png)
 
 We reject the null hypothesis. 
 
