@@ -551,8 +551,8 @@ def Generate_one_simulation(cumulative_win: float, target_score:int = 21, head_c
             isinstance(Summary, bool) & isinstance(detail_summary, bool)):
         raise ValueError("Check the input datatype")
 
-    if not (isinstance(cumulative_win,float) | isinstance(cumulative_win, int) | isinstance(cumulative_win, np.int32)):
-        raise ValueError("cumulative_win datatype wrong")
+    # if not (isinstance(cumulative_win,float) | isinstance(cumulative_win, int) | isinstance(cumulative_win, np.int32)):
+    #     raise ValueError("cumulative_win datatype wrong")
 
     if ((target_score <= 0 ) | (target_score >= 100)):
         raise ValueError("Target Score should be in range 0 to  100 (not inclusive 0 and 100)")
