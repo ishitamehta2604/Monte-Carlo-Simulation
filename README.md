@@ -93,7 +93,8 @@ https://stackoverflow.com/questions/6181935/how-do-you-create-different-variable
 https://www.geeksforgeeks.org/print-without-newline-python/  <br>
 https://www.compart.com/en/unicode/U+1F4A3  <br>
 https://www.youtube.com/watch?v=IsklrLQE88Y&ab_channel=AllTech  <br>
-https://www.bowl.com/rules/Rules_Home/USBC_Playing_Rules/
+https://www.bowl.com/rules/Rules_Home/USBC_Playing_Rules/ <br>
+https://github.com/iSchool-597PR/2020Fall_A5
 
 
 
