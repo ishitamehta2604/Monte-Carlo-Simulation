@@ -86,6 +86,7 @@ References:
 https://www.youtube.com/watch?v=5bWpnABkU-Y&ab_channel=CrazyVegasOnlineCasino <br>
 https://www.247blackjack.com/ <br>
 https://uiuc-ischool-dataviz.github.io/is445AOG_fall2020/week05/ <br>
+https://github.com/UIUC-iSchool-DataViz/fall2019 <br>
 http://datagenetics.com/blog/march62020/index.html <br>
 https://www.888casino.com/blog/blackjack-strategy-guide/how-to-play-blackjack  <br>
 https://www.youtube.com/watch?v=5bWpnABkU-Y&ab_channel=CrazyVegasOnlineCasino  <br>
