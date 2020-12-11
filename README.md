@@ -16,9 +16,9 @@ Assumptions:
 
 Random Variables:
 
-•	Number of Players: Discrete Random <br>
-•	Cards distributed to players: Uniform Distribution <br>
-•	Players Bet: Uniform Distribution <br>
+•	Number of Players: Discrete Uniform Distribution <br>
+•	Cards distributed to players: Discrete Uniform Distribution <br>
+•	Players Bet: Discrete Uniform Distribution <br>
 
 Variations:
 •	Variable Target Score <BR>
